@@ -1,0 +1,33 @@
+.sidebar {
+  width: 230px;
+  background: #002b80;
+  color: white;
+  padding: 25px;
+  min-height: 100vh;
+  position: fixed;
+}
+
+.sidebar a {
+  display: block;
+  color: white;
+  text-decoration: none;
+  margin: 12px 0;
+  font-weight: 500;
+}
+
+.sidebar a:hover {
+  background: #0043cc;
+  padding-left: 8px;
+  transition: 0.3s;
+  border-radius: 6px;
+}
+
+.logout-btn {
+  margin-top: 25px;
+  width: 100%;
+  background: #d9534f;
+  border: none;
+  padding: 10px;
+  color: white;
+  border-radius: 6px;
+}
