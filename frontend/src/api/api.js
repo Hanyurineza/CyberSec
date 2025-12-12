@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const api = axios.create({
-  baseURL: process.env.REACT_APP_API_URL, // ✅ Works for local & production
+  baseURL: process.env.REACT_APP_API_URL, // correct
 });
 
 // 🔐 Attach token automatically
@@ -10,9 +10,7 @@ api.interceptors.request.use(
     const token =
       sessionStorage.getItem("token") || localStorage.getItem("token");
 
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
-    }
+    if (token) config.headers.Authorization = `Bearer ${token}`;
 
     return config;
   },
