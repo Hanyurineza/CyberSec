@@ -10,23 +10,21 @@ from jose import JWTError, jwt
 from ..db import get_db
 from .. import models, schemas
 
-router = APIRouter(tags=["Auth"])
+router = APIRouter(tags=["Auth"])   # no prefix, correct
 
-# -----------------------------
-# JWT & PASSWORD CONFIGURATION
-# -----------------------------
-SECRET_KEY = "SUPER_LONG_RANDOM_KEY_HERE_CHANGE_ME_123456789"
+# ------------------------------
+# CONFIGURATION
+# ------------------------------
+SECRET_KEY = "CHANGE_THIS_TO_A_LONG_RANDOM_SECRET_KEY_123456789"
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 60
 
 pwd = CryptContext(schemes=["bcrypt"], deprecated="auto")
-
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/auth/login")
 
-
-# -----------------------------
+# ------------------------------
 # TOKEN CREATION
-# -----------------------------
+# ------------------------------
 def create_access_token(data: dict, expires_delta: Optional[timedelta] = None):
     to_encode = data.copy()
     expire = datetime.utcnow() + (
@@ -36,40 +34,37 @@ def create_access_token(data: dict, expires_delta: Optional[timedelta] = None):
     return jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
 
 
-# -----------------------------
-# TEMPORARY SUPERADMIN CREATION
-# -----------------------------
+# ------------------------------
+# FIRST SUPERADMIN CREATION (RUN ONCE)
+# ------------------------------
 @router.post("/init-superadmin")
 def init_superadmin(db: Session = Depends(get_db)):
-    """
-    Creates the FIRST SuperAdmin.
-    Safe: Will run only once. Remove after deployment.
-    """
-
     existing = db.query(models.User).filter(models.User.role == "SuperAdmin").first()
     if existing:
-        return {"message": "SuperAdmin already exists"}
+        raise HTTPException(400, "SuperAdmin already exists")
 
-    super_admin = models.User(
+    superadmin = models.User(
         name="Super Admin",
         email="superadmin@system.com",
         passwordHash=pwd.hash("SuperAdmin123"),
         role="SuperAdmin",
-        department="System",
+        department="IT",
     )
 
-    db.add(super_admin)
+    db.add(superadmin)
     db.commit()
+    db.refresh(superadmin)
 
     return {"message": "SuperAdmin created successfully"}
 
 
-# -----------------------------
-# LOGIN ENDPOINT
-# -----------------------------
+# ------------------------------
+# LOGIN
+# ------------------------------
 @router.post("/login")
 def login(payload: schemas.LoginRequest, db: Session = Depends(get_db)):
     user = db.query(models.User).filter(models.User.email == payload.email).first()
+
     if not user:
         raise HTTPException(404, "User not found")
 
@@ -96,10 +91,9 @@ def login(payload: schemas.LoginRequest, db: Session = Depends(get_db)):
         },
     }
 
-
-# -----------------------------
-# AUTH MIDDLEWARE
-# -----------------------------
+# ------------------------------
+# GET CURRENT USER
+# ------------------------------
 async def get_current_user(
     token: str = Depends(oauth2_scheme),
     db: Session = Depends(get_db),
@@ -113,10 +107,8 @@ async def get_current_user(
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
         email: str = payload.get("sub")
-
         if email is None:
             raise credentials_exception
-
     except JWTError:
         raise credentials_exception
 
