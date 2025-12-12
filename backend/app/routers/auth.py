@@ -52,7 +52,7 @@ def init_superadmin(db: Session = Depends(get_db)):
 
     super_admin = models.User(
         name="Super Admin",
-        email="superadmin@nssystem.com",
+        email="superadmin@system.com",
         passwordHash=pwd.hash("SuperAdmin123"),
         role="SuperAdmin",
         department="System",
