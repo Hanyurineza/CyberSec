@@ -1,14 +1,13 @@
 import axios from "axios";
 
 const api = axios.create({
-  baseURL: "http://127.0.0.1:8000/api",
+  baseURL: process.env.REACT_APP_API_URL, // ✅ Works for local & production
 });
 
-// Attach token to every request
+// 🔐 Attach token automatically
 api.interceptors.request.use(
   (config) => {
-    // 🔥 sessionStorage is tab-specific
-    let token =
+    const token =
       sessionStorage.getItem("token") || localStorage.getItem("token");
 
     if (token) {
