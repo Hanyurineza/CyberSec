@@ -24,6 +24,7 @@ import SendTipsPage from "./pages/SendTipsPage";
 import TakeQuizPage from "./pages/TakeQuizPage";
 import PrivateRoute from "./components/PrivateRoute";
 import TopicDetailPage from "./pages/TopicDetailPage";
+import Policies from "./pages/Policies";
 
 export default function App() {
   return (
@@ -175,6 +176,14 @@ export default function App() {
           element={
             <PrivateRoute allowedRoles={["Staff", "Admin", "SuperAdmin"]}>
               <TopicDetailPage />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/policies"
+          element={
+            <PrivateRoute allowedRoles={["SuperAdmin"]}>
+              <Policies />
             </PrivateRoute>
           }
         />

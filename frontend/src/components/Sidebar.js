@@ -31,6 +31,7 @@ const Sidebar = () => {
           <Link to="/manage-users">Manage Users</Link>
           <Link to="/topics">Awareness Topics</Link>
           <Link to="/reports">Reports</Link>
+          <Link to="/policies">Policies</Link>
         </>
       )}
 

@@ -21,11 +21,8 @@ export default function LoginPage() {
       const role = (data.user?.role || "").toLowerCase();
 
       // 🔥 SAVE ONLY IN SESSIONSTORAGE
-      sessionStorage.setItem(
-        "user",
-        JSON.stringify({ ...data.user, token: data.token })
-      );
-      sessionStorage.setItem("token", data.token);
+      sessionStorage.setItem("token", data.access_token);
+      sessionStorage.setItem("user", JSON.stringify(data.user));
       sessionStorage.setItem("role", role);
 
       // (Optional, harmless) – NOT used for authentication

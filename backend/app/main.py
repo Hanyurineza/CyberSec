@@ -4,15 +4,13 @@ from fastapi.middleware.cors import CORSMiddleware
 from app.core.config import settings
 from app.db import Base, engine
 import app.models   # ensure models load
+from app.routers import policies
 
 print(">>> MAIN Base =", Base)
 
-
-# Debug optional prints
-print("✔ Tables created successfully")
-
-# Create tables
+# Create tables (OK for now in development)
 Base.metadata.create_all(bind=engine)
+print("✔ Tables created successfully")
 
 # Init FastAPI
 app = FastAPI(title="Cybersecurity Awareness API")
@@ -20,13 +18,19 @@ app = FastAPI(title="Cybersecurity Awareness API")
 # CORS config
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],   # Allow all origins (or only React: http://localhost:3000)
+    allow_origins=[
+        "http://localhost:3000",
+        "http://localhost:3001",
+        "http://192.168.0.100:3000",
+        "http://192.168.0.100:3001",
+    ],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
-
-# Routers
+# ============================================================
+# ROUTERS
+# ============================================================
 from app.routers import (
     auth,
     staff,
@@ -37,6 +41,7 @@ from app.routers import (
     training,
     awareness,
     home,
+    policies,   # ✅ ADD THIS
 )
 
 app.include_router(auth.router, prefix="/api/auth", tags=["Auth"])
@@ -48,8 +53,12 @@ app.include_router(training.router, prefix="/api/training", tags=["Training"])
 app.include_router(awareness.router, prefix="/api/awareness", tags=["Awareness"])
 app.include_router(reports.router, prefix="/api/reports", tags=["Reports"])
 app.include_router(home.router, prefix="/api/home", tags=["Home"])
+app.include_router(policies.router, prefix="/api/policies", tags=["Policies"])
 
-# Health
+
+# ============================================================
+# HEALTH CHECK
+# ============================================================
 @app.get("/api/ping")
 def ping():
     return {"message": "pong"}

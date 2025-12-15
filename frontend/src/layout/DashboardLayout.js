@@ -20,6 +20,7 @@ export default function DashboardLayout({ children }) {
       { href: "/add-quiz", label: "🧩 Manage Quizzes" },
       { href: "/reports", label: "📈 Overall Reports" },
       { href: "/manage-tips", label: "💡 Manage Tips" },
+      { href: "/policies", label: "📄 Policies" },
     ];
   } else if (role === "admin") {
     navLinks = [
@@ -27,12 +28,14 @@ export default function DashboardLayout({ children }) {
       { href: "/reports", label: "📈 Our Performance" },
       { href: "/topics", label: "📚 Awareness Topics" },
       { href: "/manage-tips", label: "💡 Awareness Tips" },
+      { href: "/policies", label: "📄 Policies" },
     ];
   } else {
     navLinks = [
       { href: "/staff-dashboard", label: "📊 My Dashboard" },
       { href: "/my-reports", label: "📈 My Results" },
       { href: "/tips", label: "💡 Cyber Tips" },
+      { href: "/policies", label: "📄 Policies" },
     ];
   }
 

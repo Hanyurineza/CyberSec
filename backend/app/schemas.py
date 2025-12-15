@@ -3,6 +3,36 @@ from datetime import datetime
 from typing import Optional
 
 # =============================
+# TOPICS
+# =============================
+class TopicBase(BaseModel):
+    title: str
+    description: str | None = None
+    link: str | None = None
+    category: str | None = None
+    file_path: str | None = None
+class TopicCreate(TopicBase):
+    pass
+class TopicOut(TopicBase):
+    topicId: int
+
+    class Config:
+        from_attributes = True
+# =============================
+# POLICIES
+# =============================
+class PolicyOut(BaseModel):
+    policyId: int
+    title: str
+    description: Optional[str] = None
+    filePath: str
+    uploadedBy: Optional[str] = None
+    createdAt: datetime
+    downloadCount: int 
+class Config:
+        from_attributes = True
+
+# =============================
 # USERS / STAFF
 # =============================
 class UserBase(BaseModel):
@@ -13,11 +43,11 @@ class UserBase(BaseModel):
 
 
 class UserCreate(UserBase):
-    password: Optional[str] = None   # Raw password from form
+    password: Optional[str] = None
 
 
 class UserUpdate(UserBase):
-    password: Optional[str] = None   # Optional for updates
+    password: Optional[str] = None
 
 
 class UserOut(BaseModel):
@@ -38,33 +68,11 @@ class UserOut(BaseModel):
 class LoginRequest(BaseModel):
     email: EmailStr
     password: str
-
-
+    
 class LoginResponse(BaseModel):
     token: str
     user: UserOut
-
-
-# =============================
-# TOPICS
-# =============================
-class TopicBase(BaseModel):
-    title: str
-    description: str
-    link: Optional[str] = None   # FIXED HERE
-
-
-class TopicCreate(TopicBase):
-    pass
-
-
-class TopicOut(TopicBase):
-    topicId: int
-    class Config:
-        from_attributes = True
-
-
-
+    
 # =============================
 # QUIZZES
 # =============================

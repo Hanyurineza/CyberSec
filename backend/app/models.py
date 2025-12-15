@@ -1,8 +1,32 @@
-from sqlalchemy import Column, Integer, String, DateTime, Text, ForeignKey, Float
+from sqlalchemy import (
+    Column,
+    Integer,
+    String,
+    DateTime,
+    Text,
+    ForeignKey,
+    Float,
+)
 from sqlalchemy.sql import func
 from sqlalchemy.orm import relationship
+from datetime import datetime
+
 from app.db import Base
 
+
+# =====================================
+# POLICIES
+# =====================================
+class Policy(Base):
+    __tablename__ = "policies"
+
+    policyId = Column(Integer, primary_key=True, index=True)
+    title = Column(String(255), nullable=False)
+    description = Column(String(500))
+    filePath = Column(String(500), nullable=False)
+    uploadedBy = Column(String(100))
+    createdAt = Column(DateTime, default=datetime.utcnow)
+    downloadCount = Column(Integer, default=0)
 
 # =====================================
 # USERS / STAFF
@@ -18,8 +42,8 @@ class User(Base):
     department = Column(String(255), nullable=True)
     createdAt = Column(DateTime, server_default=func.now())
 
-    attempts = relationship("QuizAttempt", back_populates="user")
-    reports = relationship("Report", back_populates="user")
+    attempts = relationship("QuizAttempt", back_populates="user", cascade="all, delete")
+    reports = relationship("Report", back_populates="user", cascade="all, delete")
 
 
 # =====================================
@@ -35,7 +59,7 @@ class Topic(Base):
     category = Column(String(255), nullable=True)
     file_path = Column(String(500), nullable=True)
 
-    quizzes = relationship("Quiz", back_populates="topic")
+    quizzes = relationship("Quiz", back_populates="topic", cascade="all, delete")
 
 
 # =====================================
@@ -55,7 +79,7 @@ class Quiz(Base):
     topicId = Column(Integer, ForeignKey("topics.topicId"), nullable=False)
     topic = relationship("Topic", back_populates="quizzes")
 
-    attempts = relationship("QuizAttempt", back_populates="quiz")
+    attempts = relationship("QuizAttempt", back_populates="quiz", cascade="all, delete")
 
 
 # =====================================
@@ -84,7 +108,7 @@ class Awareness(Base):
     awarenessId = Column(Integer, primary_key=True, index=True)
     title = Column(String(255), nullable=False)
     description = Column(Text, nullable=True)
-    file_path = Column(String(500), nullable=True)
+    filePath = Column(String(500), nullable=True)
     link = Column(String(500), nullable=True)
 
 
