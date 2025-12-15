@@ -3,19 +3,21 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from app.core.config import settings
 from app.db import Base, engine
-import app.models   # ensure models load
-from app.routers import policies
-
-print(">>> MAIN Base =", Base)
+import app.models  # ensure models load
 
 # Create tables (OK for now in development)
 Base.metadata.create_all(bind=engine)
-print("✔ Tables created successfully")
 
 # Init FastAPI
-app = FastAPI(title="Cybersecurity Awareness API")
+app = FastAPI(
+    title="Cybersecurity Awareness API",
+    docs_url="/docs",
+    redoc_url="/redoc"
+)
 
-# CORS config
+# ============================================================
+# CORS
+# ============================================================
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
@@ -28,6 +30,17 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# ============================================================
+# ROOT (IMPORTANT FOR RAILWAY)
+# ============================================================
+@app.get("/")
+def root():
+    return {
+        "status": "running",
+        "service": "Cybersecurity Awareness API"
+    }
+
 # ============================================================
 # ROUTERS
 # ============================================================
@@ -41,7 +54,7 @@ from app.routers import (
     training,
     awareness,
     home,
-    policies,   # ✅ ADD THIS
+    policies,
 )
 
 app.include_router(auth.router, prefix="/api/auth", tags=["Auth"])
@@ -54,7 +67,6 @@ app.include_router(awareness.router, prefix="/api/awareness", tags=["Awareness"]
 app.include_router(reports.router, prefix="/api/reports", tags=["Reports"])
 app.include_router(home.router, prefix="/api/home", tags=["Home"])
 app.include_router(policies.router, prefix="/api/policies", tags=["Policies"])
-
 
 # ============================================================
 # HEALTH CHECK
